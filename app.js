@@ -66,11 +66,31 @@ connectToDatabase().then(database => {
                     sortOptions[field] = direction !== 'desc' ? 1 : -1;
                 }
             }
-            console.log("sort:", sortOptions);
 
+
+            // 获取查询参数，默认为空对象
+            let query = {};
+            const queryParam = req.query.query;
+            console.log("queryParam:", queryParam);
+            if (queryParam) {
+                try {
+                    // 尝试解析查询参数为JSON对象
+                    query = JSON.parse(queryParam);
+                    // 确保查询是一个对象
+                    if (typeof query !== 'object' || query === null) {
+                        query = {};
+                    }
+                } catch (err) {
+                    // 解析失败，使用空对象
+                    console.error('Failed to parse query parameter:', err);
+                    query = {};
+                }
+            }
+
+            console.log("query:", query);
             const collection = db.collection(req.params.tablename);
             try {
-                const items = await collection.find({})
+                const items = await collection.find(query)
                     .sort(sortOptions)
                     .skip(validSkip)
                     .limit(validLimit)
