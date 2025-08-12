@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { MongoClient } = require('mongodb');
+const { MongoClient,ObjectId } = require('mongodb');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -57,7 +57,9 @@ connectToDatabase().then(database => {
         try {
             const { id } = req.params;
             const collection = db.collection(req.params.tablename);
-            const item = await collection.findOne({ _id: new require('mongodb').ObjectId(id) });
+            // ObjectId(id)
+            console.log("get item:",new ObjectId(id));
+            const item = await collection.findOne({ _id:new ObjectId(id) });
             if (item) {
                 res.json(item);
             } else {
@@ -75,7 +77,7 @@ connectToDatabase().then(database => {
             const updateData = req.body;
             const collection = db.collection(req.params.tablename);
             const result = await collection.findOneAndUpdate(
-                { _id: new require('mongodb').ObjectId(id) },
+                { _id: new ObjectId(id) },
                 { $set: updateData },
                 { returnOriginal: false }
             );
@@ -94,7 +96,7 @@ connectToDatabase().then(database => {
         try {
             const { id } = req.params;
             const collection = db.collection(req.params.tablename);
-            const result = await collection.deleteOne({ _id: new require('mongodb').ObjectId(id) });
+            const result = await collection.deleteOne({ _id: new ObjectId(id) });
             if (result.deletedCount > 0) {
                 res.status(204).send();
             } else {
@@ -104,7 +106,7 @@ connectToDatabase().then(database => {
             res.status(500).json({ message: 'Error deleting item', error: err.message });
         }
     });
-    
+
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
         console.log(`Server is running on port ${port}`);
