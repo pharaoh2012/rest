@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 // MongoDB 连接
 const uri = process.env.AZURE_COSMOS_CONNECTIONSTRING;
 const client = new MongoClient(uri);
-const dbName = 'restDB';
+const dbName = 'test';
 
 async function connectToDatabase() {
     try {
@@ -29,10 +29,10 @@ connectToDatabase().then(database => {
 
     // 修改各接口使用 MongoDB 操作
     // 创建 (POST)
-    app.post('/items', async (req, res) => {
+    app.post('/v1/rest/:tablename', async (req, res) => {
         try {
             const newItem = req.body;
-            const collection = db.collection('items');
+            const collection = db.collection(req.params.tablename);
             const result = await collection.insertOne(newItem);
             newItem._id = result.insertedId;
             res.status(201).json(newItem);
@@ -42,9 +42,9 @@ connectToDatabase().then(database => {
     });
 
     // 读取所有 (GET)
-    app.get('/items', async (req, res) => {
+    app.get('/v1/rest/:tablename', async (req, res) => {
         try {
-            const collection = db.collection('items');
+            const collection = db.collection(req.params.tablename);
             const items = await collection.find({}).toArray();
             res.json(items);
         } catch (err) {
@@ -53,10 +53,10 @@ connectToDatabase().then(database => {
     });
 
     // 读取单个 (GET)
-    app.get('/items/:id', async (req, res) => {
+    app.get('/v1/rest/:tablename/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const collection = db.collection('items');
+            const collection = db.collection(req.params.tablename);
             const item = await collection.findOne({ _id: new require('mongodb').ObjectId(id) });
             if (item) {
                 res.json(item);
@@ -69,11 +69,11 @@ connectToDatabase().then(database => {
     });
 
     // 更新 (PUT)
-    app.put('/items/:id', async (req, res) => {
+    app.put('/v1/rest/:tablename/:id', async (req, res) => {
         try {
             const { id } = req.params;
             const updateData = req.body;
-            const collection = db.collection('items');
+            const collection = db.collection(req.params.tablename);
             const result = await collection.findOneAndUpdate(
                 { _id: new require('mongodb').ObjectId(id) },
                 { $set: updateData },
@@ -90,10 +90,10 @@ connectToDatabase().then(database => {
     });
 
     // 删除 (DELETE)
-    app.delete('/items/:id', async (req, res) => {
+    app.delete('/v1/rest/:tablename/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const collection = db.collection('items');
+            const collection = db.collection(req.params.tablename);
             const result = await collection.deleteOne({ _id: new require('mongodb').ObjectId(id) });
             if (result.deletedCount > 0) {
                 res.status(204).send();
