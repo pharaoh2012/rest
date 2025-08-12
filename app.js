@@ -47,8 +47,9 @@ connectToDatabase().then(database => {
             // 获取limit参数，默认为100
             const limit = parseInt(req.query.limit) || 100;
             // 确保limit是有效的数字且大于0
-            const validLimit = isNaN(limit) || limit <= 0 ? 100 : limit;
-            
+            let validLimit = isNaN(limit) || limit <= 0 ? 100 : limit;
+            if (validLimit > 2000) validLimit = 2000;
+
             const collection = db.collection(req.params.tablename);
             const items = await collection.find({}).limit(validLimit).toArray();
             res.json(items);
