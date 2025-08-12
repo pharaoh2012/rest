@@ -50,8 +50,13 @@ connectToDatabase().then(database => {
             let validLimit = isNaN(limit) || limit <= 0 ? 100 : limit;
             if (validLimit > 2000) validLimit = 2000;
 
+            // 获取skip参数，默认为0
+            const skip = parseInt(req.query.skip) || 0;
+            // 确保skip是有效的数字且大于等于0
+            const validSkip = isNaN(skip) || skip < 0 ? 0 : skip;
+
             const collection = db.collection(req.params.tablename);
-            const items = await collection.find({}).limit(validLimit).toArray();
+            const items = await collection.find({}).skip(validSkip).limit(validLimit).toArray();
             res.json(items);
         } catch (err) {
             res.status(500).json({ message: 'Error fetching items', error: err.message });
