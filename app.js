@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { MongoClient,ObjectId } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 // MongoDB 连接
 const uri = process.env.AZURE_COSMOS_CONNECTIONSTRING;
 const client = new MongoClient(uri);
-const dbName = 'test';
+const dbName = process.env.DBNAME || 'test';
 
 async function connectToDatabase() {
     try {
@@ -58,8 +58,8 @@ connectToDatabase().then(database => {
             const { id } = req.params;
             const collection = db.collection(req.params.tablename);
             // ObjectId(id)
-            console.log("get item:",new ObjectId(id));
-            const item = await collection.findOne({ _id:new ObjectId(id) });
+            console.log("get item:", new ObjectId(id));
+            const item = await collection.findOne({ _id: new ObjectId(id) });
             if (item) {
                 res.json(item);
             } else {
