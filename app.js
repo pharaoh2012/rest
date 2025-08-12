@@ -83,7 +83,7 @@ connectToDatabase().then(database => {
                         message: 'Cannot sort by the specified field. The field may not have an index in the database.',
                         error: 'Missing index for sort field',
                         sortField: Object.keys(sortOptions)[0] || 'unknown',
-                        suggestion: '请创建索引后再排序查询.'
+                        suggestion: '请创建索引后再排序查询. /v1/createindex/:tablename/:field'
                     });
                 } else {
                     res.status(500).json({
@@ -152,6 +152,29 @@ connectToDatabase().then(database => {
         }
     });
 
+    app.get('/v1/createindex/:tablename/:field', async (req, res) => {
+        try {
+            const { tablename, field } = req.params;
+            const collection = db.collection(tablename);
+            
+            // 创建索引 (1表示升序，-1表示降序)
+            const indexResult = await collection.createIndex({ [field]: 1 });
+            
+            res.json({
+                message: 'Index created successfully',
+                indexName: indexResult,
+                field: field,
+                collection: tablename
+            });
+        } catch (err) {
+            res.status(500).json({
+                message: 'Error creating index',
+                error: err.message,
+                field: field,
+                collection: tablename
+            });
+        }
+    });
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
         console.log(`Server is running on port ${port}`);
