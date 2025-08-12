@@ -55,9 +55,43 @@ connectToDatabase().then(database => {
             // 确保skip是有效的数字且大于等于0
             const validSkip = isNaN(skip) || skip < 0 ? 0 : skip;
 
+            // 获取sort参数，格式为field:direction (例如: name:asc 或 age:desc)
+            const sortParam = req.query.sort || '';
+            let sortOptions = {};
+
+            // 解析并验证sort参数
+            if (sortParam) {
+                const [field, direction] = sortParam.split(':');
+                if (field) {
+                    sortOptions[field] = direction !== 'desc' ? 1 : -1;
+                }
+            }
+            console.log("sort:", sortOptions);
+
             const collection = db.collection(req.params.tablename);
-            const items = await collection.find({}).skip(validSkip).limit(validLimit).toArray();
-            res.json(items);
+            try {
+                const items = await collection.find({})
+                    .sort(sortOptions)
+                    .skip(validSkip)
+                    .limit(validLimit)
+                    .toArray();
+                res.json(items);
+            } catch (err) {
+                // 处理Azure Cosmos DB索引错误
+                if (err.message && err.message.includes('The index path corresponding to the specified order-by item is excluded')) {
+                    res.status(400).json({
+                        message: 'Cannot sort by the specified field. The field may not have an index in the database.',
+                        error: 'Missing index for sort field',
+                        sortField: Object.keys(sortOptions)[0] || 'unknown',
+                        suggestion: '请创建索引后再排序查询.'
+                    });
+                } else {
+                    res.status(500).json({
+                        message: 'Error fetching items',
+                        error: err.message
+                    });
+                }
+            }
         } catch (err) {
             res.status(500).json({ message: 'Error fetching items', error: err.message });
         }
