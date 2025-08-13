@@ -253,7 +253,12 @@ const table = new Tabulator("#example-table", {
     columnDefaults: {
         tooltip: function (e, cell) {
             const v = cell.getValue();
-            if (typeof v === "string") return cell.getValue().replace(/\n/g, "<br>");
+            const field = cell.getColumn().getField();
+            if (field === "cron" && v) {
+                let times = getTodayCronTimes(v).map(d => new Date(d * 1000).toLocaleString())
+                return v.replace(/\n/g, "<br>") + "<br><br>" + times.join("<br>")
+            }
+            if (typeof v === "string") return v.replace(/\n/g, "<br>");
             return v;
         },
     },
@@ -278,7 +283,7 @@ const table = new Tabulator("#example-table", {
         { title: "user", field: "user", validator: "required", editor: "list", headerFilter: "list", headerFilterParams: { values: users }, editorParams: { multiselect: true, values: users }, headerContextMenu: headerMenu, width: 80 },
 
         { title: "type", field: "type", validator: "required", editor: "list", headerFilterFunc: "=", headerFilter: "list", headerFilterParams: { values: tasks }, editorParams: { values: tasks }, headerContextMenu: headerMenu, width: 80 },
-        { title: "cron", field: "cron", editor: "textarea", headerFilter: "tickCross", headerFilterParams: { "tristate": true }, headerFilterFunc: cronFilterFunction, headerContextMenu: headerMenu, width: 100 },
+        { title: "cron", field: "cron", editor: "textarea", headerFilter: "tickCross", headerFilterParams: { "tristate": true }, headerFilterFunc: cronFilterFunction, headerContextMenu: headerMenu, width: 100, validator: cronValidatorFunction },
         { title: "备注", field: "备注", editor: true, headerFilter: true, width: 100, headerContextMenu: headerMenu, width: 100 },
         { title: "修改时间", field: "修改时间", editor: true, sorter: "number", headerFilter: false, formatter: timeFormatter, headerContextMenu: headerMenu, visible: false, width: 140 },
         { title: "url", field: "url", validator: "required", editor: "textarea", headerFilter: "input", width: 200, headerContextMenu: headerMenu },
@@ -286,6 +291,18 @@ const table = new Tabulator("#example-table", {
     ],
 });
 
+function cronValidatorFunction(cell, value, parameters) {
+    if (!value) return true;
+    try {
+        const times = getTodayCronTimes(value)
+        console.log(times)
+        return true;
+    } catch (e) {
+        showError("corn表达式错误：<br >" + e.message, 5000)
+        return false;
+    }
+
+}
 function cronFilterFunction(headerValue, rowValue, rowData, filterParams) {
     // console.info({ headerValue, rowValue, rowData, filterParams })
     if (headerValue) {
