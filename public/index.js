@@ -1,5 +1,4 @@
 
-// https://rest.azurewebsites.net/v1/rest/tasks?limit=1000
 // #region 常量定义
 const groups = [
     "6:早上任务",
@@ -64,7 +63,7 @@ const rowMenu = [
             table.addRow(data, true, id).then(newrow => {
                 table.deselectRow();
                 newrow.select();
-                fetch("https://rest.azurewebsites.net/v1/rest/tasks", {
+                fetch("/v1/rest/tasks", {
                     method: "POST",
                     headers: {
                         'User-Agent': 'api',
@@ -105,7 +104,7 @@ const rowMenu = [
             const data = row.getData();
             if (confirm(`确定要删除“${data.name}”吗？`)) {
                 const id = data._id;
-                fetch("https://rest.azurewebsites.net/v1/rest/tasks/" + id, {
+                fetch("/v1/rest/tasks/" + id, {
                     method: "DELETE"
                 }).then(res => {
                     if (res.ok) {
@@ -236,7 +235,7 @@ function getMaxId() {
 
 const table = new Tabulator("#example-table", {
     // 替换为ajax加载方式
-    ajaxURL: "https://rest.azurewebsites.net/v1/rest/tasks?limit=1000",          // 从JSON文件加载数据
+    ajaxURL: "/v1/rest/tasks?limit=1000",          // 从JSON文件加载数据
     height: "100%",
     // rowHeight: 40,
     renderVertical: "basic", //disable virtual DOM rendering
@@ -320,7 +319,7 @@ table.on("cellEdited", function (cell) {
     cell.getRow().update({ 修改时间: Date.now() })
     const _id = cell.getData()._id
     console.log("updateValue:", updateValue)
-    fetch(`https://rest.azurewebsites.net/v1/rest/tasks/${_id}`, {
+    fetch(`/v1/rest/tasks/${_id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
