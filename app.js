@@ -6,6 +6,8 @@ const { MongoClient, ObjectId } = require('mongodb');
 
 app.use(cors());
 app.use(bodyParser.json());
+// 添加静态文件支持
+app.use(express.static('public'));
 
 // MongoDB 连接
 const uri = process.env.AZURE_COSMOS_CONNECTIONSTRING;
