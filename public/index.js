@@ -251,7 +251,11 @@ const table = new Tabulator("#example-table", {
     ],
     groupBy: "group",
     columnDefaults: {
-        tooltip: true,         //show tool tips on cells
+        tooltip: function (e, cell) {
+            const v = cell.getValue();
+            if (typeof v === "string") return cell.getValue().replace(/\n/g, "<br>");
+            return v;
+        },
     },
     rowContextMenu: rowMenu, //add context menu to rows
     headerContextMenu: headerMenu,
@@ -268,15 +272,15 @@ const table = new Tabulator("#example-table", {
         },
         {
             title: "group", field: "group", editor: "list", headerFilterFunc: "=", validator: "required", headerContextMenu: headerMenu, headerFilter: "list",  // 启用list类型筛选器
-            headerFilterParams: { values: groups }, editorParams: { values: groups },width: 100
+            headerFilterParams: { values: groups }, editorParams: { values: groups }, width: 100
         },
-        { title: "index", field: "index", validator: "required", sorter: "number", editor: "number", headerFilter: true, hozAlign: "right", headerContextMenu: headerMenu,width: 50 },
-        { title: "user", field: "user", validator: "required", editor: "list", headerFilter: "list", headerFilterParams: { values: users }, editorParams: { multiselect: true, values: users }, headerContextMenu: headerMenu,width: 80 },
+        { title: "index", field: "index", validator: "required", sorter: "number", editor: "number", headerFilter: true, hozAlign: "right", headerContextMenu: headerMenu, width: 50 },
+        { title: "user", field: "user", validator: "required", editor: "list", headerFilter: "list", headerFilterParams: { values: users }, editorParams: { multiselect: true, values: users }, headerContextMenu: headerMenu, width: 80 },
 
-        { title: "type", field: "type", validator: "required", editor: "list", headerFilterFunc: "=", headerFilter: "list", headerFilterParams: { values: tasks }, editorParams: { values: tasks }, headerContextMenu: headerMenu,width: 80 },
-        { title: "cron", field: "cron", editor: "textarea", headerFilter: "tickCross", headerFilterParams: { "tristate": true }, headerFilterFunc: cronFilterFunction, headerContextMenu: headerMenu,width: 100 },
-        { title: "备注", field: "备注", editor: true, headerFilter: true, width: 100, headerContextMenu: headerMenu,width: 100 },
-        { title: "修改时间", field: "修改时间", editor: true, sorter: "number", headerFilter: false, formatter: timeFormatter, headerContextMenu: headerMenu, visible: false,width: 140 },
+        { title: "type", field: "type", validator: "required", editor: "list", headerFilterFunc: "=", headerFilter: "list", headerFilterParams: { values: tasks }, editorParams: { values: tasks }, headerContextMenu: headerMenu, width: 80 },
+        { title: "cron", field: "cron", editor: "textarea", headerFilter: "tickCross", headerFilterParams: { "tristate": true }, headerFilterFunc: cronFilterFunction, headerContextMenu: headerMenu, width: 100 },
+        { title: "备注", field: "备注", editor: true, headerFilter: true, width: 100, headerContextMenu: headerMenu, width: 100 },
+        { title: "修改时间", field: "修改时间", editor: true, sorter: "number", headerFilter: false, formatter: timeFormatter, headerContextMenu: headerMenu, visible: false, width: 140 },
         { title: "url", field: "url", validator: "required", editor: "textarea", headerFilter: "input", width: 200, headerContextMenu: headerMenu },
 
     ],
