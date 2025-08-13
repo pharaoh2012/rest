@@ -272,7 +272,7 @@ const table = new Tabulator("#example-table", {
             title: "group", field: "group", editor: "list", headerFilterFunc: "=", validator: "required", headerContextMenu: headerMenu, headerFilter: "list",  // 启用list类型筛选器
             headerFilterParams: { values: groups }, editorParams: { values: groups }
         },
-        { title: "index", field: "index", validator: "required", editor: "number", headerFilter: true, hozAlign: "right", headerContextMenu: headerMenu },
+        { title: "index", field: "index", validator: "required", sorter: "number", editor: "number", headerFilter: true, hozAlign: "right", headerContextMenu: headerMenu },
         { title: "user", field: "user", validator: "required", editor: "list", headerFilter: "list", headerFilterParams: { values: users }, editorParams: { multiselect: true, values: users }, headerContextMenu: headerMenu },
 
         { title: "type", field: "type", validator: "required", editor: "list", headerFilterFunc: "=", headerFilter: "list", headerFilterParams: { values: tasks }, editorParams: { values: tasks }, headerContextMenu: headerMenu },
