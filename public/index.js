@@ -57,10 +57,10 @@ const rowMenu = [
             data.nameuser = data.nameuser + "_copy";
             data._id = undefined;
             data.id = getMaxId() + 1;
-            console.log(data);
+            data.index = data.index + 1;
             data.name = data.nameuser + data.类型.replace(/,/g, "");
             data.修改时间 = Date.now();
-            table.addRow(data, true, id).then(newrow => {
+            table.addRow(data, false, id).then(newrow => {
                 table.deselectRow();
                 newrow.select();
                 fetch("/v1/rest/tasks", {
