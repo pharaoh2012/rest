@@ -264,23 +264,21 @@ const table = new Tabulator("#example-table", {
         { title: "类型", field: "类型", editor: "list", frozen: false, headerContextMenu: headerMenu, headerFilter: "list", headerFilterParams: { values: types }, editorParams: { multiselect: true, values: types } },
         // { title: "disabled", field: "disabled", width: 95, editor: "list", editorParams: { multiselect: true, values: ["male", "female"] } },
         {
-            title: "disabled", field: "disabled", editor: "list", formatter: disabledFormatter, headerContextMenu: headerMenu, hozAlign: "center", headerFilter: "list", validator: "required", headerFilterParams: { values: disables }, editorParams: {
+            title: "disabled", field: "disabled", editor: "list", formatter: disabledFormatter, headerContextMenu: headerMenu, hozAlign: "center", headerFilter: "list", validator: "required", headerFilterFunc: "=", headerFilterParams: { values: disables }, editorParams: {
                 values: disables
             }
         },
         {
-            title: "group", field: "group", editor: "list", validator: "required", headerContextMenu: headerMenu, headerFilter: "list",  // 启用list类型筛选器
-            headerFilterParams: {
-                values: groups     // 关联预定义分组列表
-            }, editorParams: { multiselect: false, values: groups }
+            title: "group", field: "group", editor: "list", headerFilterFunc: "=", validator: "required", headerContextMenu: headerMenu, headerFilter: "list",  // 启用list类型筛选器
+            headerFilterParams: { values: groups }, editorParams: { values: groups }
         },
         { title: "index", field: "index", validator: "required", editor: "number", headerFilter: true, hozAlign: "right", headerContextMenu: headerMenu },
         { title: "user", field: "user", validator: "required", editor: "list", headerFilter: "list", headerFilterParams: { values: users }, editorParams: { multiselect: true, values: users }, headerContextMenu: headerMenu },
 
-        { title: "type", field: "type", validator: "required", editor: "list", headerFilter: "list", headerFilterParams: { values: tasks }, editorParams: { values: tasks }, headerContextMenu: headerMenu },
+        { title: "type", field: "type", validator: "required", editor: "list", headerFilterFunc: "=", headerFilter: "list", headerFilterParams: { values: tasks }, editorParams: { values: tasks }, headerContextMenu: headerMenu },
         { title: "cron", field: "cron", editor: "textarea", headerFilter: "tickCross", headerFilterParams: { "tristate": true }, headerFilterFunc: cronFilterFunction, headerContextMenu: headerMenu },
         { title: "备注", field: "备注", editor: true, headerFilter: true, width: 100, headerContextMenu: headerMenu },
-        { title: "修改时间", field: "修改时间", editor: true, headerFilter: true, formatter: timeFormatter, headerContextMenu: headerMenu },
+        { title: "修改时间", field: "修改时间", editor: true, headerFilter: false, formatter: timeFormatter, headerContextMenu: headerMenu },
         { title: "url", field: "url", validator: "required", editor: "textarea", headerFilter: "input", width: 200, headerContextMenu: headerMenu },
 
     ],
