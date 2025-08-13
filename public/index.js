@@ -260,25 +260,23 @@ const table = new Tabulator("#example-table", {
     ],
     columns: [
         { title: "#", formatter: "rownum", frozen: true, headerSort: false, hozAlign: "right", headerContextMenu: headerMenu },           //define the table columns
-        { title: "Name", field: "nameuser", editor: "input", frozen: true, headerFilter: true, validator: "required", headerContextMenu: headerMenu },
-        { title: "类型", field: "类型", editor: "list", frozen: false, headerContextMenu: headerMenu, headerFilter: "list", headerFilterParams: { values: types }, editorParams: { multiselect: true, values: types } },
+        { title: "Name", field: "nameuser", editor: "input", frozen: true, headerFilter: true, validator: "required", headerContextMenu: headerMenu, width: 150 },
+        { title: "类型", field: "类型", editor: "list", frozen: false, headerContextMenu: headerMenu, headerFilter: "list", headerFilterParams: { values: types }, editorParams: { multiselect: true, values: types }, width: 100 },
         // { title: "disabled", field: "disabled", width: 95, editor: "list", editorParams: { multiselect: true, values: ["male", "female"] } },
         {
-            title: "disabled", field: "disabled", editor: "list", formatter: disabledFormatter, headerContextMenu: headerMenu, hozAlign: "center", headerFilter: "list", validator: "required", headerFilterFunc: "=", headerFilterParams: { values: disables }, editorParams: {
-                values: disables
-            }
+            title: "disabled", field: "disabled", editor: "list", formatter: disabledFormatter, headerContextMenu: headerMenu, hozAlign: "center", headerFilter: "list", validator: "required", headerFilterFunc: "=", headerFilterParams: { values: disables }, editorParams: { values: disables }, width: 50
         },
         {
             title: "group", field: "group", editor: "list", headerFilterFunc: "=", validator: "required", headerContextMenu: headerMenu, headerFilter: "list",  // 启用list类型筛选器
-            headerFilterParams: { values: groups }, editorParams: { values: groups }
+            headerFilterParams: { values: groups }, editorParams: { values: groups },width: 100
         },
-        { title: "index", field: "index", validator: "required", sorter: "number", editor: "number", headerFilter: true, hozAlign: "right", headerContextMenu: headerMenu },
-        { title: "user", field: "user", validator: "required", editor: "list", headerFilter: "list", headerFilterParams: { values: users }, editorParams: { multiselect: true, values: users }, headerContextMenu: headerMenu },
+        { title: "index", field: "index", validator: "required", sorter: "number", editor: "number", headerFilter: true, hozAlign: "right", headerContextMenu: headerMenu,width: 50 },
+        { title: "user", field: "user", validator: "required", editor: "list", headerFilter: "list", headerFilterParams: { values: users }, editorParams: { multiselect: true, values: users }, headerContextMenu: headerMenu,width: 80 },
 
-        { title: "type", field: "type", validator: "required", editor: "list", headerFilterFunc: "=", headerFilter: "list", headerFilterParams: { values: tasks }, editorParams: { values: tasks }, headerContextMenu: headerMenu },
-        { title: "cron", field: "cron", editor: "textarea", headerFilter: "tickCross", headerFilterParams: { "tristate": true }, headerFilterFunc: cronFilterFunction, headerContextMenu: headerMenu },
-        { title: "备注", field: "备注", editor: true, headerFilter: true, width: 100, headerContextMenu: headerMenu },
-        { title: "修改时间", field: "修改时间", editor: true, sorter: "number", headerFilter: false, formatter: timeFormatter, headerContextMenu: headerMenu },
+        { title: "type", field: "type", validator: "required", editor: "list", headerFilterFunc: "=", headerFilter: "list", headerFilterParams: { values: tasks }, editorParams: { values: tasks }, headerContextMenu: headerMenu,width: 80 },
+        { title: "cron", field: "cron", editor: "textarea", headerFilter: "tickCross", headerFilterParams: { "tristate": true }, headerFilterFunc: cronFilterFunction, headerContextMenu: headerMenu,width: 100 },
+        { title: "备注", field: "备注", editor: true, headerFilter: true, width: 100, headerContextMenu: headerMenu,width: 100 },
+        { title: "修改时间", field: "修改时间", editor: true, sorter: "number", headerFilter: false, formatter: timeFormatter, headerContextMenu: headerMenu, visible: false,width: 140 },
         { title: "url", field: "url", validator: "required", editor: "textarea", headerFilter: "input", width: 200, headerContextMenu: headerMenu },
 
     ],
