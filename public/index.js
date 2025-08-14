@@ -1,4 +1,4 @@
-
+const HOST = ""
 // #region 常量定义
 const groups = [
     "6:早上任务",
@@ -58,12 +58,21 @@ const rowMenu = [
             data._id = undefined;
             data.id = getMaxId() + 1;
             data.index = data.index + 1;
-            data.name = data.nameuser + data.类型.replace(/,/g, "");
-            data.修改时间 = Date.now();
+            // console.log(data);
+            const type = typeof data.类型;
+            let name = data.类型;
+            if (type === "string") {
+                name = data.类型.replace(/,/g, "").trim();
+            } else if (type === "object") {
+                name = data.类型.join("")
+            }
+
+            data.name = name + data.nameuser,
+                data.修改时间 = Date.now();
             table.addRow(data, false, id).then(newrow => {
                 table.deselectRow();
                 newrow.select();
-                fetch("/v1/rest/tasks", {
+                fetch(HOST + "/v1/rest/tasks", {
                     method: "POST",
                     headers: {
                         'User-Agent': 'api',
@@ -104,7 +113,7 @@ const rowMenu = [
             const data = row.getData();
             if (confirm(`确定要删除“${data.name}”吗？`)) {
                 const id = data._id;
-                fetch("/v1/rest/tasks/" + id, {
+                fetch(HOST + "/v1/rest/tasks/" + id, {
                     method: "DELETE"
                 }).then(res => {
                     if (res.ok) {
@@ -235,7 +244,7 @@ function getMaxId() {
 
 const table = new Tabulator("#example-table", {
     // 替换为ajax加载方式
-    ajaxURL: "/v1/rest/tasks?limit=1000",          // 从JSON文件加载数据
+    ajaxURL: HOST + "/v1/rest/tasks?limit=1000",          // 从JSON文件加载数据
     height: "100%",
     // rowHeight: 40,
     renderVertical: "basic", //disable virtual DOM rendering
@@ -254,6 +263,7 @@ const table = new Tabulator("#example-table", {
         tooltip: function (e, cell) {
             const v = cell.getValue();
             const field = cell.getColumn().getField();
+            // console.log("v:", v,typeof v)
             if (field === "cron" && v) {
                 let times = getTodayCronTimes(v).map(d => new Date(d * 1000).toLocaleString())
                 return v.replace(/\n/g, "<br>") + "<br><br>" + times.join("<br>")
@@ -293,6 +303,7 @@ const table = new Tabulator("#example-table", {
 
 function cronValidatorFunction(cell, value, parameters) {
     if (!value) return true;
+    console.log("cronValidatorFunction", value)
     try {
         const times = getTodayCronTimes(value)
         console.log(times)
@@ -303,6 +314,7 @@ function cronValidatorFunction(cell, value, parameters) {
     }
 
 }
+
 function cronFilterFunction(headerValue, rowValue, rowData, filterParams) {
     // console.info({ headerValue, rowValue, rowData, filterParams })
     if (headerValue) {
@@ -328,15 +340,23 @@ table.on("cellEdited", function (cell) {
     // console.log("cell changed:", cell.getData(), cell.getOldValue())
     const field = cell.getColumn().getField()
     const data = cell.getData()
+    const type = typeof data.类型
+    let name = data.类型;
+    if (type === "string") {
+        name = data.类型.replace(/,/g, "").trim();
+    } else if (type === "object") {
+        name = data.类型.join("")
+    }
+
     const updateValue = {
         [field]: value,
         修改时间: Date.now(),
-        name: data.nameuser + data.类型.replace(/,/g, "")
+        name: name + data.nameuser,
     }
     cell.getRow().update({ 修改时间: Date.now() })
     const _id = cell.getData()._id
     console.log("updateValue:", updateValue)
-    fetch(`/v1/rest/tasks/${_id}`, {
+    fetch(HOST + `/v1/rest/tasks/${_id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -352,11 +372,11 @@ table.on("cellEdited", function (cell) {
     // cell.getValue()
 });
 
-function showError(message) {
+function showError(message, timeout = 3000) {
     table.alert("❌" + message)
     setTimeout(() => {
         table.clearAlert()
-    }, 3000);
+    }, timeout);
 }
 
 
